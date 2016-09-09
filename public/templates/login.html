@@ -1,0 +1,19 @@
+<h1>Login</h1>
+
+<form ng-submit="login.submit()" name="login.form" novalidate>
+  <div class="form-group">
+    <input type="text" name="email" class="form-control" placeholder="Email" ng-model="login.credentials.email" required>
+    <div class="error" ng-messages="login.form.email.$error" ng-show="login.form.email.$touched">
+      <small ng-message="required">Required</small>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <input type="text" name="password" class="form-control" placeholder="Password" ng-model="login.credentials.password" required>
+    <div class="error" ng-messages="login.form.password.$error" ng-show="login.form.password.$touched">
+      <small ng-message="required">Required</small>
+    </div>
+  </div>
+
+  <button class="btn btn-primary">Login</button>
+</form>
