@@ -1,10 +1,9 @@
 {
   "name": "api",
   "version": "1.0.0",
-  "description": "",
   "main": "app.js",
   "scripts": {
-    "start":"node app",
+    "start": "node app",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -17,5 +16,15 @@
     "jsonwebtoken": "^7.1.9",
     "mongoose": "^4.5.10",
     "morgan": "^1.7.0"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/laij84/WDI_LDN_21_PROJECT4.git"
+  },
+  "bugs": {
+    "url": "https://github.com/laij84/WDI_LDN_21_PROJECT4/issues"
+  },
+  "homepage": "https://github.com/laij84/WDI_LDN_21_PROJECT4#readme",
+  "description": ""
 }
