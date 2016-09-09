@@ -49,7 +49,7 @@ gulp.task('compress', function () {
 });
 
 gulp.task('minify-css', function() {
-  return gulp.src('public/css/app.css')
+  return gulp.src('public/css/style.css')
     .pipe(cleanCSS({compatibility: 'ie8'}))
     .pipe(rename({ extname: '.min.css' }))
     .pipe(gulp.dest('public/css'));
@@ -57,14 +57,14 @@ gulp.task('minify-css', function() {
 
 gulp.task('replace:prod', function() {
   return gulp.src('public/index.html')
-    .pipe(replace(/app\.css/, 'app.min.css'))
+    .pipe(replace(/style\.css/, 'style.min.css'))
     .pipe(replace(/app\.js/, 'app.min.js'))
     .pipe(gulp.dest('public'));
 });
 
 gulp.task('replace:dev', function() {
   return gulp.src('public/index.html')
-    .pipe(replace(/app\.min\.css/, 'app.css'))
+    .pipe(replace(/style\.min\.css/, 'style.css'))
     .pipe(replace(/app\.min\.js/, 'app.js'))
     .pipe(gulp.dest('public'));
 });
@@ -82,7 +82,7 @@ gulp.task("default", function() {
     });
   });
 
-  gulp.watch(["public/css/app.css"], function() {
+  gulp.watch(["public/css/style.css"], function() {
     runSeq(["minify-css"], function() {
       livereload.reload("public/index.html");
     });
