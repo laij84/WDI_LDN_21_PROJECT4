@@ -1,12 +1,23 @@
-angular.module("HomeworkApp", ['ui.router', 'ngResource', 'angular-jwt', "ngMessages"])
+angular.module("HomeworkApp", ['ui.router', 'ngResource', 'angular-jwt', "ngMessages", "satellizer"])
   .constant("API_URL", "http://localhost:3000/api")
   .config(Router)
-  .config(setupInteceptor);
+  .config(oAuthConfig);
+  // .config(setupInterceptor);
 
-  setupInteceptor.$inject = ["$httpProvider"];
+  // setupInterceptor.$inject = ["$httpProvider"];
 
-  function setupInteceptor($httpProvider) {
-    return $httpProvider.interceptors.push("AuthInterceptor");
+  // function setupInterceptor($httpProvider) {
+  //   return $httpProvider.interceptors.push("AuthInterceptor");
+  // }
+
+  oAuthConfig.$inject = ["$authProvider"];
+  function oAuthConfig($authProvider) {
+    
+    $authProvider.facebook({
+      url: "api/oauth/facebook",
+      clientId: "1753104004957041"
+    });
+
   }
 
 Router.$inject = ["$stateProvider", "$urlRouterProvider"];
@@ -31,30 +42,47 @@ function Router($stateProvider, $urlRouterProvider){
 
     $urlRouterProvider.otherwise("/");
 };
+
+
+
 angular
   .module("HomeworkApp")
   .controller("LoginController", LoginController);
 
-LoginController.$inject = ["User", "$state", "$rootScope"];
-function LoginController(User, $state, $rootScope) {
+LoginController.$inject = ["User", "$state", "$rootScope", "$auth"];
+function LoginController(User, $state, $rootScope, $auth) {
 
   this.credentials = {};
 
-  this.submit = function submit() {
-    if (this.form.$valid){
-      User.login(this.credentials, function(response){
-        $rootScope.$broadcast("loggedIn")
-        $state.go("home");
+  this.authenticate = function(provider) {
+    $auth.authenticate(provider)
+      .then(function() {
+        $rootScope.$broadcast("loggedIn");
+        $state.go('home');
       });
-    }
   }
+
+  this.submit = function() {
+    $auth.login(this.credentials, {
+      url: "/api/login"
+    }).then(function(){
+      $rootScope.$broadcast("loggedIn");
+      $state.go('home');
+    })
+  }
+
 }
+
+
+
+
+
 angular.module("HomeworkApp")
   .controller("MainController", MainController);
 
-MainController.$inject = ["TokenService", "$state", "$rootScope"];
+MainController.$inject = ["TokenService", "$state", "$rootScope", "$auth"];
 
-function MainController(TokenService, $state, $rootScope){
+function MainController(TokenService, $state, $rootScope, $auth){
   var self = this;
 
   this.currentUser = TokenService.decodeToken();
@@ -73,6 +101,7 @@ function MainController(TokenService, $state, $rootScope){
     self.errorMessage = "You must be logged in!"
     $state.go("login");
   });
+
 
 }
 angular
@@ -111,40 +140,40 @@ function User($resource, API_URL) {
     register: {method: "POST", url: API_URL +"/register"}
   });
 }
-angular.module("HomeworkApp")
-  .factory("AuthInterceptor", AuthInterceptor);
+// angular.module("HomeworkApp")
+//   .factory("AuthInterceptor", AuthInterceptor);
 
-AuthInterceptor.$inject = ["TokenService", "API_URL", "$rootScope"];
+// AuthInterceptor.$inject = ["TokenService", "API_URL", "$rootScope"];
 
-//specific syntax for interceptor to work with Angular.
-function AuthInterceptor(TokenService, API_URL, $rootScope) {
-  return {
-    request: function(request) {
-      var token = TokenService.getToken();
+// //specific syntax for interceptor to work with Angular.
+// function AuthInterceptor(TokenService, API_URL, $rootScope) {
+//   return {
+//     request: function(request) {
+//       var token = TokenService.getToken();
 
-      if(!!request.url.match(API_URL) && token) {
-        request.headers.Authorization = "Bearer " + token;
-      }
+//       if(!!request.url.match(API_URL) && token) {
+//         request.headers.Authorization = "Bearer " + token;
+//       }
 
-      return request;
-    },
+//       return request;
+//     },
 
-    response: function(response){
-      if(!!response.config.url.match(API_URL) && response.data.token) {
-        TokenService.setToken(response.data.token);
-      }
+//     response: function(response){
+//       if(!!response.config.url.match(API_URL) && response.data.token) {
+//         TokenService.setToken(response.data.token);
+//       }
 
-      return response;
-    },
+//       return response;
+//     },
 
-    responseError: function(response){
-      if(response.status===401){
-        $rootScope.$broadcast("unauthorized");
-      }
-      return response.data; //need to return data
-    }
-  }
-}
+//     responseError: function(response){
+//       if(response.status===401){
+//         $rootScope.$broadcast("unauthorized");
+//       }
+//       return response.data; //need to return data
+//     }
+//   }
+// }
 
 angular.module("HomeworkApp")
   .service("TokenService", TokenService);
