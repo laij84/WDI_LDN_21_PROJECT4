@@ -18,8 +18,19 @@ angular.module("HomeworkApp", ['ui.router', 'ngResource', 'angular-jwt', "ngMess
       clientId: "1753104004957041"
     });
 
+    $authProvider.github({
+      url: "api/oauth/github",
+      clientId: "95023e03ef010ac16b36"
+    });
+
+    $authProvider.twitter({
+      url: "api/oauth/twitter",
+      clientId: ""
+    });
+
   }
 
+  
 Router.$inject = ["$stateProvider", "$urlRouterProvider"];
 
 function Router($stateProvider, $urlRouterProvider){
@@ -51,15 +62,17 @@ angular
 
 LoginController.$inject = ["User", "$state", "$rootScope", "$auth"];
 function LoginController(User, $state, $rootScope, $auth) {
-
+  var self = this;
   this.credentials = {};
 
   this.authenticate = function(provider) {
+    
     $auth.authenticate(provider)
       .then(function() {
         $rootScope.$broadcast("loggedIn");
         $state.go('home');
       });
+    
   }
 
   this.submit = function() {
@@ -80,21 +93,21 @@ function LoginController(User, $state, $rootScope, $auth) {
 angular.module("HomeworkApp")
   .controller("MainController", MainController);
 
-MainController.$inject = ["TokenService", "$state", "$rootScope", "$auth"];
-
-function MainController(TokenService, $state, $rootScope, $auth){
+MainController.$inject = ["$state", "$rootScope", "$auth", "$window"];
+function MainController($state, $rootScope, $auth, $window){
   var self = this;
 
-  this.currentUser = TokenService.decodeToken();
+  this.currentUser = $auth.getPayload();
 
   this.logout = function logout(){
-    TokenService.clearToken();
+    $auth.logout();
     this.currentUser = null;
     $state.go("home");
   }
 
   $rootScope.$on("loggedIn", function(){
-    self.currentUser = TokenService.decodeToken();
+    self.currentUser = $auth.getPayload();
+    console.log(self.currentUser);
   });
 
   $rootScope.$on("unauthorized", function(){
@@ -108,16 +121,19 @@ angular
   .module("HomeworkApp")
   .controller("RegisterController", RegisterController);
 
-RegisterController.$inject = ["User", "$state", "$rootScope"]
-function RegisterController(User, $state, $rootScope) {
+RegisterController.$inject = ["$auth", "$state", "$rootScope"]
+function RegisterController($auth, $state, $rootScope) {
   
   this.user = {};
 
   this.submit = function() {
-    User.register(this.user, function(response){
-      $rootScope.$broadcast("loggedIn");
-      $state.go("home");
+    $auth.signup(this.user, {
+      url: "/api/register"
     })
+    .then(function(){
+      $rootScope.$broadcast("loggedIn");
+      $state.go("login");
+    });
   }
 }
 angular
@@ -135,66 +151,6 @@ angular
 User.$inject = ["$resource", "API_URL"];
 function User($resource, API_URL) {
   return $resource(API_URL + "/users", { id: '@_id' }, {
-    update: { method: "PUT" },
-    login: {method: "POST", url: API_URL +"/login"},
-    register: {method: "POST", url: API_URL +"/register"}
+    update: { method: "PUT" }
   });
-}
-// angular.module("HomeworkApp")
-//   .factory("AuthInterceptor", AuthInterceptor);
-
-// AuthInterceptor.$inject = ["TokenService", "API_URL", "$rootScope"];
-
-// //specific syntax for interceptor to work with Angular.
-// function AuthInterceptor(TokenService, API_URL, $rootScope) {
-//   return {
-//     request: function(request) {
-//       var token = TokenService.getToken();
-
-//       if(!!request.url.match(API_URL) && token) {
-//         request.headers.Authorization = "Bearer " + token;
-//       }
-
-//       return request;
-//     },
-
-//     response: function(response){
-//       if(!!response.config.url.match(API_URL) && response.data.token) {
-//         TokenService.setToken(response.data.token);
-//       }
-
-//       return response;
-//     },
-
-//     responseError: function(response){
-//       if(response.status===401){
-//         $rootScope.$broadcast("unauthorized");
-//       }
-//       return response.data; //need to return data
-//     }
-//   }
-// }
-
-angular.module("HomeworkApp")
-  .service("TokenService", TokenService);
-
-TokenService.$inject = ["$window", "jwtHelper"];
-
-function TokenService($window, jwtHelper) {
-  this.setToken = function setToken(token) {
-    return $window.localStorage.setItem("token", token); //key and value
-  }
-
-  this.getToken = function getToken(){
-    return $window.localStorage.getItem("token");
-  }
-
-  this.decodeToken = function decodeToken() {
-    var token = this.getToken();
-    return token ? jwtHelper.decodeToken(token) : null;
-  } 
-
-  this.clearToken = function clearToken() {
-    return $window.localStorage.removeItem("token");
-  }
 }

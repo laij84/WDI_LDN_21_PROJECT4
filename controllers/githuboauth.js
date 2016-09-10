@@ -8,8 +8,8 @@ function login(req, res) {
   request.post({
     url: "https://github.com/login/oauth/access_token",
     qs: {
-      client_id: process.env.GITHUB_API_KEY,
-      client_secret: process.env.GITHUB_API_SECRET,
+      client_id: process.env.GH_WDIPROJECT4_API_KEY,
+      client_secret: process.env.GH_WDIPROJECT4_API_SECRET,
       code: req.body.code
     },
     json: true
