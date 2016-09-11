@@ -5,36 +5,42 @@
 <br>
 
 <h2>NEW EVENT</h2>
-<form ng-submit="calendar.addEvent();">
-<div class="form-group">
-  <input placeholder="name" class="form-control" type="text" name="title" ng-model="calendar.newEvent.title">
-</div>
+<form ng-submit="calendar.createEvent();">
+  <div class="form-group">
+    <input placeholder="name" class="form-control" type="text" name="title" ng-model="calendar.newEvent.title">
+  </div>
 
-<div class="form-group">
-  <input placeholder="Start Date Time" class="form-control" type="datetime" name="start" ng-model="calendar.newEvent.start">
-</div>
-<div class="form-group">
-  <input placeholder="End Date Time" class="form-control" type="datetime" name="start" ng-model="calendar.newEvent.end">
-</div>
+  <div class="form-group">
+    <input placeholder="Start Date Time" class="form-control" type="datetime" name="start" ng-model="calendar.newEvent.start">
+  </div>
+  <div class="form-group">
+    <input placeholder="End Date Time" class="form-control" type="datetime" name="start" ng-model="calendar.newEvent.end">
+  </div>
+
+  <select>
+    <option value="work">Volvo</option>
+    <option value="saab">Saab</option>
+    <option value="mercedes">Mercedes</option>
+    <option value="audi">Audi</option>
+  </select>
 
 <button>Add Event</button>
 </form>
 
 <br>
+<div>
+  <h2>Update</h2>
+  <form ng-submit="calendar.update();">
+    <div class="form-group">
+      <input class="form-control" type="text" name="title" ng-model="calendar.selectedEvent.title">
+    </div>
 
-
-<h2>Update</h2>
-<form ng-submit="calendar.updateEvent();">
-<div class="form-group">
-  <input class="form-control" type="text" name="title" ng-model="calendar.selectedEvent.title">
+    <div class="form-group">
+      <input class="form-control" type="datetime" name="start" ng-model="calendar.selectedEvent.start">
+    </div>
+    <div class="form-group">
+      <input class="form-control" type="datetime" name="start" ng-model="calendar.selectedEvent.end">
+    </div>
+    <button>Add Event</button>
+  </form>
 </div>
-
-<div class="form-group">
-  <input class="form-control" type="datetime" name="start" ng-model="calendar.selectedEvent.start">
-</div>
-<div class="form-group">
-  <input class="form-control" type="datetime" name="start" ng-model="calendar.selectedEvent.end">
-</div>
-
-<button>Add Event</button>
-</form>
