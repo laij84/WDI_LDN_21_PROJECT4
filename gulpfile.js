@@ -14,7 +14,16 @@ gulp.task("bower", function() {
   var jsFilter = filter("**/*.js", { restore: true });
   var cssFilter = filter("**/*.css");
 
-  return gulp.src(bower())
+  return gulp.src(bower({
+    overrides: {
+      bootstrap: {
+        main: [
+          "dist/css/bootstrap.css",
+          "dist/js/bootstrap.js"
+        ]
+      }
+    }
+  }))
     .pipe(jsFilter)
     .pipe(concat("vendor.js"))
     .pipe(gulp.dest("public/js"))
@@ -78,18 +87,6 @@ gulp.task("default", function() {
   //watches for changes in files before running sequences. 
   gulp.watch(["lib/**/*", "public/index.html", "public/templates/**"], function() {
     runSeq(["concat", "sass", "copy"], function() {
-      livereload.reload("public/index.html");
-    });
-  });
-
-  gulp.watch(["public/css/style.css"], function() {
-    runSeq(["minify-css"], function() {
-      livereload.reload("public/index.html");
-    });
-  });
-
-  gulp.watch(["public/js/app.js"], function() {
-    runSeq(["compress"], function() {
       livereload.reload("public/index.html");
     });
   });
