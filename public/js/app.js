@@ -81,16 +81,6 @@ function CalendarController($resource, $state, $rootScope, uiCalendarConfig, $au
   // events must be defined before eventSources
   this.events = Event.query();
 
-  // [
-  //   {
-  //     title: 'Happy Hour',
-  //     start: new Date(y, m, d, h), 
-  //     end: new Date(y, m, d, h+1), 
-  //     type: this.eventTypes[1], 
-  //     className: this.eventTypes[1]
-  //   }
-  // ];
-
 console.log(this.events);
 
  //renders calendar with events when changing day/week/month views
@@ -104,6 +94,8 @@ console.log(this.events);
      }
    };
 
+  this.eventValue = null;
+
   this.uiConfig = {
         calendar:{
           height: 450,
@@ -116,10 +108,8 @@ console.log(this.events);
           },
           eventClick: function(event){
             self.selectedEvent = event;
+            console.log(self.selectedEvent.end.diff(self.selectedEvent.start, 'minutes'));
             console.log(self.selectedEvent);
-            console.log(self.selectedEvent.title);
-            console.log(self.selectedEvent.start);
-            console.log(self.selectedEvent.end);
           },
           eventDrop: self.alertOnDrop,
           eventResize: self.alertOnResize,
