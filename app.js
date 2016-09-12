@@ -10,6 +10,8 @@ var port = process.env.PORT || 3000;
 var routes = require('./config/routes');
 var databaseUri = require('./config/db')(environment);
 
+mongoose.Promise = require('bluebird');
+
 mongoose.connect(databaseUri);
 
 // Use morgan for logging

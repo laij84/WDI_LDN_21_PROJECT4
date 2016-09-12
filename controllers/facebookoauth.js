@@ -32,7 +32,7 @@ function login(req, res) {
         }
         else {
           user = new User({
-            username: profile.login,
+            username: profile.name,
             email: profile.email,
             facebookId: profile.id,
             avatar: profile.picture ? profile.picture.data.url : null

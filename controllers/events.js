@@ -13,7 +13,6 @@ function eventIndex(req, res) {
 
 function eventShow(req, res) {
   Event.findById(req.params.id)
-    .populate('director')
     .then(function(event) {
       res.status(200).json(event);
     })
@@ -24,10 +23,12 @@ function eventShow(req, res) {
 }
 
 function eventCreate(req, res) {
+
+  req.body.user = req.user;
+
   Event.create(req.body)
     .then(function(event) {
-      return Event.findById(event._id)
-        .populate('director');
+      return Event.findById(event._id);
     })
     .then(function(event) {
       res.status(201).json(event);
@@ -39,14 +40,17 @@ function eventCreate(req, res) {
 }
 
 function eventUpdate(req, res) {
+
   Event.findById(req.params.id)
     .then(function(event) {
+
+      if(event.user._id !== req.user._id) return res.status(401).json({ message: 'Unauthorized User' });
+
       for(key in req.body) event[key] = req.body[key];
       return event.save();
     })
     .then(function(event) {
-      return Event.findById(event._id)
-        .populate('director');
+      return Event.findById(event._id);
     })
     .then(function(event) {
       res.status(200).json(event);
