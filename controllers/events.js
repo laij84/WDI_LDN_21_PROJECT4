@@ -40,24 +40,30 @@ function eventCreate(req, res) {
 }
 
 function eventUpdate(req, res) {
-
+  console.log("updating event...");
   Event.findById(req.params.id)
     .then(function(event) {
-
-      if(event.user._id !== req.user._id) return res.status(401).json({ message: 'Unauthorized User' });
+      console.log(event.user);
+      if(event.user != req.user._id) {
+        throw new Error("Unauthorized User");
+      }
 
       for(key in req.body) event[key] = req.body[key];
       return event.save();
     })
     .then(function(event) {
+      console.log("event saved...");
       return Event.findById(event._id);
     })
     .then(function(event) {
-      res.status(200).json(event);
+      console.log("sending resposne...");
+      return res.status(200).json(event);
     })
     .catch(function(err) {
-      console.log(err);
-      res.status(500).json(err);
+      if(err.message === "Unauthorized User") {
+        return res.status(401).json({ message: err.message });
+      }
+      return res.status(500).json(err);
     });
 }
 

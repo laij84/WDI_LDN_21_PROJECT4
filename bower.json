@@ -24,6 +24,7 @@
     "angular-messages": "^1.5.8",
     "satellizer": "^0.15.5",
     "angular-ui-calendar": "^1.0.2",
-    "bootstrap": "3.3.7"
+    "bootstrap": "3.3.7",
+    "eonasdan-bootstrap-datetimepicker": "^4.17.42"
   }
 }

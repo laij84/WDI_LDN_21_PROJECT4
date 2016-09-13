@@ -63,9 +63,7 @@ CalendarController.$inject = ["$resource", "$state", "$rootScope", "uiCalendarCo
 
 function CalendarController($resource, $state, $rootScope, uiCalendarConfig, $auth, Event, $compile) {
   var self = this;
-  this.all = Event.query();
 
-  console.log(self);
   //Error when getting current user? $auth not a function error
   this.currentUser = $auth.getPayload();
 
@@ -107,7 +105,7 @@ function CalendarController($resource, $state, $rootScope, uiCalendarConfig, $au
 
    this.eventClick = function(event){
      self.selectedEvent = event;
-     console.log(self.selectedEvent.end.diff(self.selectedEvent.start, 'minutes'));
+     // console.log(self.selectedEvent.end.diff(self.selectedEvent.start, 'minutes'));
      console.log(self.selectedEvent);
      $('#editEventModal').modal("show");
    }
@@ -169,6 +167,28 @@ function CalendarController($resource, $state, $rootScope, uiCalendarConfig, $au
     });
   }
 
+  this.delete = function(event){
+    //remove from events array
+    var index = self.events.indexOf(event);
+    console.log(index);
+    self.events.splice(index, 1);
+
+    //delete from database
+    Event.delete({ id: this.selectedEvent._id }, function() {
+      uiCalendarConfig.calendars.cal.fullCalendar('refetchEvents');
+      self.selectedEvent = null;
+    }, function(err){
+      console.log(err);
+    });
+  }
+
+  this.startDatetimepicker = function(){
+    $('.start-datetimepicker').datetimepicker();
+  }
+  this.endDatetimepicker = function(){
+    $('.end-datetimepicker').datetimepicker();
+  }
+
 }
 angular
   .module("HomeworkApp")
@@ -177,6 +197,9 @@ angular
 LoginController.$inject = ["User", "$state", "$rootScope", "$auth"];
 function LoginController(User, $state, $rootScope, $auth) {
   var self = this;
+
+  this.all = User.query();
+  console.log(this.all[0]);
 
   this.credentials = {};
 
@@ -231,7 +254,6 @@ function MainController($state, $rootScope, $auth, $window){
     $state.go("login");
   });
 
-
 }
 angular
   .module("HomeworkApp")
@@ -261,6 +283,22 @@ function UsersController(User, $auth) {
   this.all = User.query();
 
   this.currentUser = $auth.getPayload();
+}
+angular
+  .module('HomeworkApp')
+  .directive('date', date);
+
+date.$inject = ['$window'];
+function date($window) {
+  return {
+    restrict: "A",
+    require: "ngModel",
+    link: function(scope, element, attrs, ngModel) {
+      element.on('keyup', function() {
+        ngModel.$setViewValue($window.moment(new Date(this.value)));
+      })
+    }
+  }
 }
 angular
   .module('HomeworkApp')

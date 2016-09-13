@@ -25,7 +25,8 @@ body {
   width: 50px; }
 
 #bg1 {
-  background: url(../images/hipster.jpg) no-repeat center center; }
+  background: url(../images/hipster.jpg) no-repeat center center;
+  margin-top: -70px; }
 
 #bg2 {
   background: url(../images/exercise.jpg) no-repeat center center; }
@@ -54,12 +55,23 @@ body {
   position: absolute;
   left: 0;
   top: 50%;
+  margin-top: -70px;
   width: 100%;
   text-align: center;
   color: white;
   font-size: 70px;
   z-index: 2;
   font-family: 'Shrikhand', cursive; }
+
+.home-login {
+  position: absolute;
+  left: 0;
+  top: 60%;
+  width: 100%;
+  text-align: center;
+  color: white;
+  font-size: 25px;
+  z-index: 2; }
 
 .p-text-light {
   color: #777;
@@ -74,3 +86,7 @@ body {
   text-align: center;
   padding: 50px 80px;
   text-align: justify; }
+
+.navbar-default {
+  background-color: rgba(255, 255, 255, 0);
+  border-color: rgba(255, 255, 255, 0); }
