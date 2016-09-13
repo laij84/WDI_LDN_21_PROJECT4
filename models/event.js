@@ -13,29 +13,28 @@ var eventSchema = new mongoose.Schema({
   start: Date,
   end: Date,
   category: { type: String, enum: ['very productive', 'productive', 'unproductive', 'very unproductive'] },
-  stick: { type: Boolean, default: true },
   completed: { type: Boolean, default: false }
 });
 
-eventSchema.virtual('duration')
-  .get(function() {
-    return Math.round((this.end.getTime() - this.start.getTime()) / 1000 / 60);
-  });
+// eventSchema.virtual('duration')
+//   .get(function() {
+//     return Math.round((this.end.getTime() - this.start.getTime()) / 1000 / 60);
+//   });
 
-eventSchema.virtual('value')
-  .get(function() {
-    return Math.round((this.duration / 60) * values[this.category]);
-  });
+// eventSchema.virtual('value')
+//   .get(function() {
+//     return Math.round((this.duration / 60) * values[this.category]);
+//   });
 
-eventSchema.statics.totalById = function(userId) {
-  return this.find({ user: userId })
-    .then(function(events) {
-      return events.reduce(function(prev, current) {
-        return prev + current.value;
-      }, 0);
-    });
-}
+// eventSchema.statics.totalById = function(userId) {
+//   return this.find({ user: userId })
+//     .then(function(events) {
+//       return events.reduce(function(prev, current) {
+//         return prev + current.value;
+//       }, 0);
+//     });
+// }
 
-eventSchema.set('toJSON', { virtuals: true });
+// eventSchema.set('toJSON', { virtuals: true });
 
 module.exports = mongoose.model("Event", eventSchema);

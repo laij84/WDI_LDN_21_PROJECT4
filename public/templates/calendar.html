@@ -5,7 +5,12 @@
       Add New Event
     </button>
 
-    <div calendar="cal" ui-calendar="calendar.uiConfig.calendar" ng-model="calendar.eventSources" class="col-md-9"></div>
+    <ul>
+      <li ng-repeat="event in calendar.all" ng-click="calendar.select(event)">{{event.title}}, start: {{event.start}}, end: {{event.end}} 
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editEventModal">EDIT</button>
+      <button type="button" class="btn btn-primary" ng-click="calendar.delete(event)">DELETE</button>
+      </li>
+    </ul>
 
     <div class="panel panel-default col-md-3" ng-controller="UsersController as users">
       <div class="panel-body">
@@ -24,6 +29,7 @@
     </div>
   </div>
 
+<!-- New Event Modal -->
   <div class="modal fade" tabindex="-1" role="dialog" id="addEventModal">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
@@ -32,14 +38,14 @@
           <h4 class="modal-title">New Event</h4>
         </div>
         <div class="modal-body">
-          <form ng-submit="calendar.createEvent();">
+          <form ng-submit="calendar.create();">
             <div class="form-group">
-              <input placeholder="name" class="form-control" type="text" name="title" ng-model="calendar.newEvent.title">
+              <input placeholder="name" class="form-control" type="text" name="title" ng-model="calendar.new.title">
             </div>
 
             <div class="form-group">
                <div class='input-group date start-datetimepicker'>
-                   <input type='text' date class="form-control" ng-model="calendar.newEvent.start" placeholder="Start date/time">
+                   <input type='datetime' date class="form-control" ng-model="calendar.new.start" placeholder="Start date/time">
                    <span class="input-group-addon">
                       <span class="glyphicon glyphicon-calendar" ng-click="calendar.startDatetimepicker()"></span>
                   </span>
@@ -48,7 +54,7 @@
 
             <div class="form-group">
                <div class='input-group date end-datetimepicker'>
-                   <input type='text' date class="form-control" ng-model="calendar.newEvent.end" placeholder="End date/time">
+                   <input type='datetime' date class="form-control" ng-model="calendar.new.end" placeholder="End date/time">
                    <span class="input-group-addon">
                       <span class="glyphicon glyphicon-calendar" ng-click="calendar.endDatetimepicker()"></span>
                   </span>
@@ -67,6 +73,7 @@
     </div><!-- /.modal-dialog -->
   </div><!-- /.modal -->
 
+<!-- Edit Event Modal -->
   <div class="modal fade" tabindex="-1" role="dialog" id="editEventModal">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
@@ -77,12 +84,12 @@
         <div class="modal-body">
           <form ng-submit="calendar.update()">
             <div class="form-group">
-              <input placeholder="name" class="form-control" type="text" name="title" ng-model="calendar.selectedEvent.title">
+              <input placeholder="name" class="form-control" type="text" name="title" ng-model="calendar.selected.title">
             </div>
 
             <div class="form-group">
                <div class='input-group date start-datetimepicker'>
-                   <input type='text' date class="form-control" ng-model="calendar.selectedEvent.start" placeholder="Start date/time">
+                   <input type='text' date class="form-control" ng-model="calendar.selected.start" placeholder="Start date/time">
                    <span class="input-group-addon">
                       <span class="glyphicon glyphicon-calendar" ng-click="calendar.startDatetimepicker()"></span>
                   </span>
@@ -91,21 +98,21 @@
 
             <div class="form-group">
                <div class='input-group date end-datetimepicker'>
-                   <input type='text' date class="form-control" ng-model="calendar.selectedEvent.end" placeholder="End date/time">
+                   <input type='text' date class="form-control" ng-model="calendar.selected.end" placeholder="End date/time">
                    <span class="input-group-addon">
                       <span class="glyphicon glyphicon-calendar" ng-click="calendar.endDatetimepicker()"></span>
                   </span>
               </div>
             </div>
 
-            <select ng-model="calendar.selectedEvent.category" ng-options="type for type in calendar.eventTypes"></select>
+            <select ng-model="calendar.selected.category" ng-options="type for type in calendar.eventTypes"></select>
 
           <button class="btn btn-primary">Add Event</button>
           </form>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-danger" ng-click="calendar.delete(calendar.selectedEvent)">Delete Event</button>
+          <button type="button" class="btn btn-danger" ng-click="calendar.delete(calendar.selected)">Delete Event</button>
         </div>
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->

@@ -36,7 +36,6 @@ User.create([{
     start: startDate,
     end: endDate,
     category: "very unproductive",
-    stick: true
   }], function(err, events) {
 
     if(!err) console.log("Events created!");
