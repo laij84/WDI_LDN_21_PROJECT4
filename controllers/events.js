@@ -1,14 +1,22 @@
 var Event = require('../models/event');
 
 function eventIndex(req, res) {
-  Event.find()
-    .then(function(events) {
-      res.status(200).json(events)
-    })
-    .catch(function(err) {
-      console.log(err);
-      res.status(500).json(err);
-    });
+
+  var params = {
+    user: req.user._id
+  };
+
+  if(req.query.start) params.start = { $gte: req.query.start };
+  if(req.query.end) params.end = { $lt: req.query.end };
+
+  Event.find(params)
+  .then(function(events) {
+    res.status(200).json(events)
+  })
+  .catch(function(err) {
+    console.log(err);
+    res.status(500).json(err);
+  });
 }
 
 function eventShow(req, res) {

@@ -1,0 +1,30 @@
+<div class="container">
+  <h1>New Event</h1>
+  <form ng-submit="eventsNew.create();">
+    <div class="form-group">
+      <input placeholder="name" class="form-control" type="text" name="title" ng-model="eventsNew.new.title">
+    </div>
+
+    <div class="form-group">
+       <div class='input-group date'>
+          <input type='datetime-local' date class="form-control" ng-model="eventsNew.new.start" placeholder="Start date/time">
+          <span class="input-group-addon">
+            <span class="glyphicon glyphicon-calendar"></span>
+          </span>
+      </div>
+    </div>
+
+    <div class="form-group">
+       <div class='input-group date'>
+        <input type='datetime-local' date class="form-control" ng-model="eventsNew.new.end" placeholder="End date/time">
+        <span class="input-group-addon">
+          <span class="glyphicon glyphicon-calendar"></span>
+        </span>
+      </div>
+    </div>
+
+    <select ng-model="eventsNew.new.category" ng-options="type for type in eventsNew.eventTypes"></select>
+
+    <button class="btn btn-primary">Add Event</button>
+  </form>
+</div>

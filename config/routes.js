@@ -27,6 +27,9 @@ router.post('/oauth/facebook', facebookController.login);
 router.post('/oauth/github', githubController.login);
 router.post('/oauth/twitter', twitterController.login);
 
+// router.route('/users/total')
+//   .get(usersController.pointTotal);
+
 router.route('/users')
   .get(usersController.index);
 
