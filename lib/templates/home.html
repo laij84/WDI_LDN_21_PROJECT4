@@ -1,20 +1,26 @@
   <div id="bg1"><div class="shader"></div></div>
-  <div class="p-header">Pro<span style="color:orange">Diary</span></div>
+  <div class="p-header">Pro<span style="color: #f19f0f">Diary</span></div>
 
-  <div class="home-login">LOGIN</div>
+  <div class="home-login" ng-controller="LoginController as login">
+    <div class="cl-effect-1">
+      <a ui-sref="login">Login</a>
+      <a ui-sref="register">Register</a>
+    </div>
+    <br>
+
+    <button class="social-login btn btn-social-icon btn-lg btn-facebook" ng-click="login.authenticate('facebook')"><i class="fa fa-facebook"></i></button>
+
+    <button class="social-login btn btn-social-icon btn-lg btn-twitter" ng-click="login.authenticate('twitter')"><i class="fa fa-twitter"></i></button>
+
+    <button class="social-login btn btn-social-icon btn-lg btn-github" ng-click="login.authenticate('github')"><i class="fa fa-github"></i></button>
+
+  </div>
   
-  <div class="p-text-light">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-  tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-  quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-  consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-  cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-  proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
+  <div class="p-text-light">ProDiary is a daily task-management tool to help you level-up your productivity, using competition and gamification. ProDiary will quantify your productivity in "financial" terms, helping you re-evaluate how your time is spent, so you can plan your activities more wisely.  
+  </div>
   <div id="bg2"><div class="shader"></div></div>
-  <div class="p-text-dark">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-  tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-  quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-  consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-  cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-  proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
+
+  <div class="p-text-dark">
+  Categorize your tasks by productivity level. Get "paid" for completing productive tasks, and "spend" your earnings to be unproductive. Compete with other users to reach the top 10 on the leaderboard.</div>
   <div id="bg3"><div class="shader"></div></div>
 

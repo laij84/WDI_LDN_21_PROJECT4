@@ -21,6 +21,20 @@ gulp.task("bower", function() {
           "dist/css/bootstrap.css",
           "dist/js/bootstrap.js"
         ]
+      },
+      "angularjs-datetime-picker": {
+        main: [
+          "angularjs-datetime-picker.js",
+          "angularjs-datetime-picker.css"
+        ]
+      },
+      "font-awesome": {
+        main:["css/font-awesome.css"]
+      },
+      "CreativeLinkEffects": {
+        main: [
+          "css/component.css"
+        ]
       }
     }
   }))

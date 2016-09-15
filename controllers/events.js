@@ -6,8 +6,8 @@ function eventIndex(req, res) {
     user: req.user._id
   };
 
-  if(req.query.start) params.start = { $gte: req.query.start };
-  if(req.query.end) params.end = { $lt: req.query.end };
+  if(req.query.start) params.start = { $gte: req.query.start, $lt: req.query.end };
+  // if(req.query.end) params.end = { $lt: req.query.end };
 
   Event.find(params)
   .then(function(events) {

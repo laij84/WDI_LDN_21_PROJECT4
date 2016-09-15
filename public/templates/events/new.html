@@ -1,30 +1,38 @@
 <div class="container">
-  <h1>New Event</h1>
-  <form ng-submit="eventsNew.create();">
-    <div class="form-group">
-      <input placeholder="name" class="form-control" type="text" name="title" ng-model="eventsNew.new.title">
-    </div>
+    <div class="col-md-6 col-md-offset-3">
+    <h1>New Task</h1>
+    <label>Task:</label>
+    <form ng-submit="eventsNew.create();">
+      <div class="form-group">
+        <input placeholder="Task" class="form-control" type="text" name="title" ng-model="eventsNew.new.title">
+      </div>
 
-    <div class="form-group">
-       <div class='input-group date'>
-          <input type='datetime-local' date class="form-control" ng-model="eventsNew.new.start" placeholder="Start date/time">
+      <label>Start date/time:</label>
+      <div class="form-group">
+         <div class='input-group date'>
+            <input datetime-picker type='datetime-local' date class="form-control" ng-model="eventsNew.new.start" placeholder="Start date/time">
+            <span class="input-group-addon">
+              <span class="glyphicon glyphicon-calendar"></span>
+            </span>
+        </div>
+      </div>
+
+      <label>End date/time:</label>
+      <div class="form-group">
+         <div class='input-group date'>
+          <input datetime-picker type='datetime-local' date class="form-control" ng-model="eventsNew.new.end" placeholder="End date/time">
           <span class="input-group-addon">
             <span class="glyphicon glyphicon-calendar"></span>
           </span>
+        </div>
       </div>
-    </div>
+      <div class="form-group">
 
-    <div class="form-group">
-       <div class='input-group date'>
-        <input type='datetime-local' date class="form-control" ng-model="eventsNew.new.end" placeholder="End date/time">
-        <span class="input-group-addon">
-          <span class="glyphicon glyphicon-calendar"></span>
-        </span>
+      <label>Category:</label>
+        <select class="form-control" ng-model="eventsNew.new.category" ng-options="type for type in eventsNew.eventTypes"></select>
       </div>
-    </div>
 
-    <select ng-model="eventsNew.new.category" ng-options="type for type in eventsNew.eventTypes"></select>
-
-    <button class="btn btn-primary">Add Event</button>
-  </form>
+      <button class="btn btn-primary">Add Event</button>
+    </form>
+  </div>
 </div>

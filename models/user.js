@@ -39,6 +39,14 @@ userSchema.path('passwordHash')
 }, null);
 
 userSchema.methods.validatePassword = function(password) {
-    return bcrypt.compareSync(password, this.passwordHash);
+  return bcrypt.compareSync(password, this.passwordHash);
 }
+
+userSchema.set('toJSON', {
+  transform: function(doc, json) {
+    delete json.passwordHash;
+    return json;
+  }
+});
+
 module.exports = mongoose.model("User", userSchema);

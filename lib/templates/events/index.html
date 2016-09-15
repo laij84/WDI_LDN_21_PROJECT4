@@ -1,5 +1,4 @@
 <div class="container">
-  <div class="row">
 <!-- List of Events / Tasks -->
     <div class="col-md-8">
       <div class="panel panel-default">
@@ -7,28 +6,42 @@
         <div class="panel-heading text-center">
           <h4>
             <i ng-click="eventsIndex.getDay(-1)" class="indicator glyphicon glyphicon-chevron-left  pull-left"></i>
-            {{ eventsIndex.currentDay | date: 'dd-MM-yyyy' }}
+            {{ eventsIndex.currentDay | date: 'EEE, MMM d, y' }}
             <i ng-click="eventsIndex.getDay(1)" class="indicator glyphicon glyphicon-chevron-right  pull-right"></i>
           </h4>
         </div>
         <div class="panel-body">
 
           <p><button class="btn btn-primary" type="button" ui-sref="eventsNew">Add New</button></p>
+          <div ng-class="eventsIndex.totalAmount > 0 ? 'alert alert-success' : 'alert alert-danger'">
+            <h4>You earned: £{{eventsIndex.totalAmount}} </h4>
+          </div>
+
+          <div class="text-center">
+          <fusioncharts 
+              width="600" 
+              height="400"
+              type="pie3d"
+              animateClockwise="1"
+              datasource="{{eventsIndex.dataSource}}"
+          ></fusioncharts>
+          </div>
+
 
           <!-- Progress Bar -->
           <h4>How did you spend your day?</h4>
           <div class="progress">
-            <div class="progress-bar progress-bar-success" style="width:{{eventsIndex.veryProductivePercent}}%"> {{eventsIndex.veryProductivePercent | number:0}}%
-              <!-- <span class="sr-only">35% Complete (success)</span> -->
+            <div class="progress-bar progress-bar-success" style="width:{{eventsIndex.veryProductivePercent}}%">
+              <p ng-if="eventsIndex.veryProductivePercent != 0">{{eventsIndex.veryProductivePercent | number:0}}%</p>
             </div>
             <div class="progress-bar progress-bar-info" style="width: {{eventsIndex.productivePercent}}%">
-              {{eventsIndex.productivePercent | number:0}}%
+              <p ng-if="eventsIndex.productivePercent != 0">{{eventsIndex.productivePercent | number:0}}%</p>
             </div>
             <div class="progress-bar progress-bar-warning" style="width: {{eventsIndex.unproductivePercent}}%">
-              {{eventsIndex.unproductivePercent | number:0}}%
+              <p ng-if="eventsIndex.unproductivePercent != 0">{{eventsIndex.unproductivePercent | number:0}}%</p>
             </div>
             <div class="progress-bar progress-bar-danger" style="width: {{eventsIndex.veryUnproductivePercent}}%">
-              {{eventsIndex.veryUnproductivePercent | number:0}}%
+              <p ng-if="eventsIndex.veryUnproductivePercent != 0">{{eventsIndex.veryUnproductivePercent | number:0}}%</p>
             </div>
           </div>
         </div>
@@ -37,7 +50,8 @@
         <table class="table">
         <thead>
           <tr>
-            <th>Time</th>
+            <th>Start Time</th>
+            <th>Duration</th>
             <th>Task</th>
             <th>Category</th>
             <th>Value</th>
@@ -45,9 +59,11 @@
           </tr>
           <tbody>
             <tr ng-repeat="event in eventsIndex.all | orderBy: 'start'" ng-class="{'completed' : event.completed }">
-              <td>{{event.start | date: 'HH:mm'}} - {{event.end | date: 'HH:mm'}}</td>
-              <td>{{event.title}}</td>
-              <td>{{event.category}}</td>
+              <td>{{event.start | date: 'HH:mm'}}</td>
+              <td>{{eventsIndex.formatMinutes(event.duration)}} {{eventsIndex.formattedMinutes}}
+              </td>
+              <td><a ui-sref="eventsEdit({id: event._id})">{{event.title}}</a></td>
+              <td ><span ng-class="eventsIndex.setEventClass(event.category)">{{event.category}}</span></td>
               <td>£{{event.value}}</td>
               <td class="text-center"><input ng-click="eventsIndex.update(event)" type="checkbox" ng-model="event.completed">
               <i class="indicator glyphicon glyphicon-remove  pull-right" ng-click="eventsIndex.delete(event)"></i>
@@ -64,19 +80,17 @@
     <div class="panel panel-default col-md-3" ng-controller="UsersController as users">
       <div class="panel-body">
       <h2>Leaderboard</h2>
-        <div class="media" ng-repeat="user in users.all track by $index" ng-show="$index<=10">
+        <div class="media" ng-repeat="user in users.leaderboard |orderBy: '-totals' track by $index" ng-show="$index<=10" ng-class="{'animated infinite pulse' : user._id === users.currentUser._id }">
           <div class="media-left">
             <a href="#">
               <img class="media-object" ng-src="{{user.avatar}}" alt="{{user.username}}">
             </a>
           </div>
           <div class="media-body">
-            <h4 class="media-heading">{{$index}} {{user.username}}</h4>
+            <h4 class="media-heading">{{user.username}}: £{{user.totals}}</h4>
           </div>
         </div>
       </div>
     </div>
-
-  </div> <!-- End of Row -->
 </div> <!-- End of Container -->
 

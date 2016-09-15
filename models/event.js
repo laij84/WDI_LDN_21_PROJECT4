@@ -36,5 +36,6 @@ eventSchema.virtual('value')
 // }
 
 eventSchema.set('toJSON', { virtuals: true });
+eventSchema.set('toObject', { virtuals: true });
 
 module.exports = mongoose.model("Event", eventSchema);

@@ -15,7 +15,7 @@ function secureRoute(req, res, next) {
   var token = req.headers.authorization.replace('Bearer ', '');
 
   jwt.verify(token, secret, function(err, user) {
-    if(!user) return res.status(401).json({ message: 'Invalid token' });
+    if(err || !user) return res.status(401).json({ message: 'Invalid token' });
     req.user = user;
     next();
   });
@@ -27,8 +27,8 @@ router.post('/oauth/facebook', facebookController.login);
 router.post('/oauth/github', githubController.login);
 router.post('/oauth/twitter', twitterController.login);
 
-// router.route('/users/total')
-//   .get(usersController.pointTotal);
+router.route('/users/leaderboard')
+  .get(usersController.leaderboard);
 
 router.route('/users')
   .get(usersController.index);

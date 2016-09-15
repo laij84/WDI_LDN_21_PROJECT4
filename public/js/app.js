@@ -1,4 +1,4 @@
-angular.module("HomeworkApp", ['ui.router', 'ngResource', 'angular-jwt', 'ngMessages', 'satellizer', 'ui.calendar'])
+angular.module("HomeworkApp", ['ui.router', 'ngResource', 'angular-jwt', 'ngMessages', 'satellizer', 'angularjs-datetime-picker', 'ng-fusioncharts'])
   .constant("API_URL", "http://localhost:3000/api")
   .config(Router)
   .config(oAuthConfig);
@@ -70,34 +70,6 @@ function Router($stateProvider, $urlRouterProvider){
 
 
 
-angular
-  .module('HomeworkApp')
-  .directive('date', date);
-
-function date() {
-  return {
-    restrict: 'A',
-    require: 'ngModel',
-    link: function(scope, element, attrs, ngModel) {
-      ngModel.$formatters.push(function(value) {
-        return new Date(value);
-      });
-    }
-  }
-}
-
-// date.$inject = ['$window'];
-// function date($window) {
-//   return {
-//     restrict: "A",
-//     require: "ngModel",
-//     link: function(scope, element, attrs, ngModel) {
-//       element.on('keyup', function() {
-//         ngModel.$setViewValue($window.moment(new Date(this.value)));
-//       })
-//     }
-//   }
-// }
 angular
   .module("HomeworkApp")
   .controller("LoginController", LoginController);
@@ -186,12 +158,39 @@ angular
   .module("HomeworkApp")
   .controller("UsersController", UsersController);
 
-UsersController.$inject = ["User", "$auth"];
-function UsersController(User, $auth) {
+UsersController.$inject = ["User", "$auth", "$rootScope"];
+function UsersController(User, $auth, $rootScope) {
+  var self = this;
   this.all = User.query();
 
   this.currentUser = $auth.getPayload();
+  this.leaderboard = User.leaderboard();
+
+  $rootScope.$on("UpdatedEvent", function(){
+    self.leaderboard = User.leaderboard();
+    console.log(self.leaderboard);
+  });
+
+
+
+  console.log(this.leaderboard);
 }
+angular
+  .module('HomeworkApp')
+  .directive('date', date);
+
+function date() {
+  return {
+    restrict: 'A',
+    require: 'ngModel',
+    link: function(scope, element, attrs, ngModel) {
+      ngModel.$formatters.push(function(value) {
+        return new Date(value);
+      });
+    }
+  }
+}
+
 angular
   .module('HomeworkApp')
   .factory('Event', Event);
@@ -210,7 +209,8 @@ angular
 User.$inject = ["$resource", "API_URL"];
 function User($resource, API_URL) {
   return $resource(API_URL + "/users", { id: '@_id' }, {
-    update: { method: "PUT" }
+    update: { method: "PUT" },
+    leaderboard: { method: "GET", url: "api/users/leaderboard", isArray: true }
   });
 }
 angular
@@ -248,7 +248,7 @@ function EventsEditController(Event, $state) {
 
   this.update = function() {
     this.selected.$update(function() {
-      $state.go('eventsShow', $state.params);
+      $state.go('eventsIndex', $state.params);
     });
   }
 }
@@ -262,14 +262,17 @@ function EventsIndexController($resource, $state, $rootScope, $auth, Event, Date
 
   var self = this;
 
-//default cash values
-  this.veryProductiveCount = 0;
-  this.productiveCount = 0;
-  this.unproductiveCount = 0;
-  this.veryUnproductiveCount = 0;
-  this.totalValue = 0;
+//total cash variable
+this.totalAmount = 0;
 
-//default percent values
+//default duration variables
+  this.veryProductiveDuration = 0;
+  this.productiveDuration = 0;
+  this.unproductiveDuration = 0;
+  this.veryUnproductiveDuration = 0;
+  this.totalDuration = 0;
+
+//default duration percent variables
   self.veryProductivePercent = 0;
   self.productivePercent = 0;
   self.unproductivePercent = 0;
@@ -300,18 +303,44 @@ function EventsIndexController($resource, $state, $rootScope, $auth, Event, Date
   this.getDay();
 
   function resetValues(){
-    //cash value
-    self.veryProductiveCount = 0;
-    self.productiveCount = 0;
-    self.unproductiveCount = 0;
-    self.veryUnproductiveCount = 0;
-    self.totalValue = 0;
+    //cash
+    self.totalAmount = 0;
+    //durations
+    self.veryProductiveDuration = 0;
+    self.productiveDuration = 0;
+    self.unproductiveDuration = 0;
+    self.veryUnproductiveDuration = 0;
+    self.totalDuration = 0;
 
-    //percent values
+    //percent
     self.veryProductivePercent = 0;
     self.productivePercent = 0;
     self.unproductivePercent = 0;
     self.veryUnproductivePercent = 0;
+  }
+
+
+  self.dataSource = {
+      chart: {
+          caption: "How you spent your time",
+          subcaption: "Last Year",
+          startingangle: "120",
+          showlabels: "0",
+          showlegend: "1",
+          enablemultislicing: "0",
+          slicingdistance: "15",
+          showpercentvalues: "1",
+          showpercentintooltip: "0",
+          plottooltext: "Age group : $label Total visit : $datavalue",
+          animateClockwise: "1",
+          theme: "fint"
+      },
+      data: [
+          {
+              label: "No tasks",
+              value: 100
+          }
+      ]
   }
 
 function calculateDayValue(){
@@ -319,39 +348,109 @@ function calculateDayValue(){
   self.all.$promise.then(function(events){
 
       for (i=0; i< events.length; i++){
-        self.totalValue += events[i].duration;
+        self.totalDuration += events[i].duration;
+        
         if(events[i].completed){
+          
+          self.totalAmount += events[i].value;
+
           if(events[i].category==="very productive"){
-            self.veryProductiveCount += events[i].duration;
+            self.veryProductiveDuration += events[i].duration;
           }
           else if(events[i].category==="productive"){
-            self.productiveCount += events[i].duration;
+            self.productiveDuration += events[i].duration;
           }
           else if(events[i].category==="unproductive"){
-            self.unproductiveCount += events[i].duration;
+            self.unproductiveDuration += events[i].duration;
           }
           else if(events[i].category==="very unproductive"){
-            self.veryUnproductiveCount += events[i].duration;
+            self.veryUnproductiveDuration += events[i].duration;
           }
         }
       }
 
     })
     .then(function(){
-      self.veryProductivePercent = (self.veryProductiveCount / self.totalValue)*100;
+      self.veryProductivePercent = (self.veryProductiveDuration / self.totalDuration)*100;
       console.log(self.veryProductivePercent);
 
-      self.productivePercent = (self.productiveCount / self.totalValue)*100;
-      self.unproductivePercent = (self.unproductiveCount / self.totalValue)*100;
-      self.veryUnproductivePercent = (self.veryUnproductiveCount / self.totalValue)*100;
+      self.productivePercent = (self.productiveDuration / self.totalDuration)*100;
+      self.unproductivePercent = (self.unproductiveDuration / self.totalDuration)*100;
+      self.veryUnproductivePercent = (self.veryUnproductiveDuration / self.totalDuration)*100;
+    })
+    .then(function(){
+      console.log("percent", self.veryProductivePercent)
+      self.dataSource = {
+          chart: {
+              caption: "How you spent your time",
+              subcaption: "Last Year",
+              startingangle: "120",
+              showlabels: "0",
+              showlegend: "1",
+              enablemultislicing: "0",
+              slicingdistance: "15",
+              showpercentvalues: "1",
+              showpercentintooltip: "0",
+              plottooltext: "Age group : $label Total visit : $datavalue",
+              theme: "fint",
+              animateClockwise: "1"
+          },
+          data: [
+              {
+                  label: "Very Productive",
+                  value: self.veryProductivePercent
+              },
+              {
+                  label: "Productive",
+                  value: self.productivePercent
+              },
+              {
+                  label: "Unproductive",
+                  value: self.unproductivePercent
+              },
+              {
+                  label: "Very Unproductive",
+                  value: self.veryUnproductivePercent
+              }
+          ]
+      }
+      console.log(self.dataSource)
     });
 }
 
   this.selected = null;
 
-  // this.select = function selectEvent(event) {
-  //   this.selected = event;
-  // }
+//Format minutes into user-friendly duration times
+  this.formattedMinutes = null;
+
+  this.formatMinutes = function(minutes){
+    if(minutes < 60){
+        self.formattedMinutes = (minutes) + 'm';        
+      }
+    else if(minutes%60==0){
+        self.formattedMinutes = (minutes-minutes%60)/60 + 'h';        
+      }
+    else {
+      self.formattedMinutes = ((minutes-minutes%60)/60 + 'h' + ' ' + minutes%60 + 'm');
+      }
+  }
+
+//set class of event
+
+  this.setEventClass= function (category) {
+      if (category === "very productive") {
+          return "veryproductive";
+      } 
+      else if (category === "productive") { 
+          return "productive";
+      } 
+      else if (category === "unproductive") {
+          return "unproductive";
+      }
+      else if (category === "very unproductive") {
+          return "veryunproductive";
+      }
+  };
 
 // UPDATE Event on Index Page
   this.update = function updateEvent(event) {
@@ -368,6 +467,7 @@ function calculateDayValue(){
     })
     .then(function(){
       calculateDayValue();
+      $rootScope.$broadcast("UpdatedEvent");
     });
   }
     
