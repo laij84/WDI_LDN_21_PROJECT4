@@ -1,7 +1,7 @@
 <div class="container">
 <!-- List of Events / Tasks -->
     <div class="col-md-8">
-      <div class="panel panel-default">
+      <div class="panel panel-default animated fadeInLeft">
         <!-- Default panel contents -->
         <div class="panel-heading text-center">
           <h4>
@@ -12,15 +12,9 @@
         </div>
         <div class="panel-body">
 
-          <p><button class="btn btn-primary" type="button" ui-sref="eventsNew">Add New</button></p>
-          <div ng-class="eventsIndex.totalAmount > 0 ? 'alert alert-success' : 'alert alert-danger'">
-            <h4>You earned: £{{eventsIndex.totalAmount}} </h4>
-          </div>
-
           <div class="text-center">
           <fusioncharts 
-              width="600" 
-              height="400"
+              width="100%" 
               type="pie3d"
               animateClockwise="1"
               datasource="{{eventsIndex.dataSource}}"
@@ -29,21 +23,14 @@
 
 
           <!-- Progress Bar -->
-          <h4>How did you spend your day?</h4>
+          <h5>Percentage of Completed Tasks:</h5>
+
           <div class="progress">
-            <div class="progress-bar progress-bar-success" style="width:{{eventsIndex.veryProductivePercent}}%">
-              <p ng-if="eventsIndex.veryProductivePercent != 0">{{eventsIndex.veryProductivePercent | number:0}}%</p>
-            </div>
-            <div class="progress-bar progress-bar-info" style="width: {{eventsIndex.productivePercent}}%">
-              <p ng-if="eventsIndex.productivePercent != 0">{{eventsIndex.productivePercent | number:0}}%</p>
-            </div>
-            <div class="progress-bar progress-bar-warning" style="width: {{eventsIndex.unproductivePercent}}%">
-              <p ng-if="eventsIndex.unproductivePercent != 0">{{eventsIndex.unproductivePercent | number:0}}%</p>
-            </div>
-            <div class="progress-bar progress-bar-danger" style="width: {{eventsIndex.veryUnproductivePercent}}%">
-              <p ng-if="eventsIndex.veryUnproductivePercent != 0">{{eventsIndex.veryUnproductivePercent | number:0}}%</p>
+            <div class="progress-bar" ng-class="eventsIndex.setProgressClass(eventsIndex.completedEventsCount / eventsIndex.all.length*100)" style="width:{{eventsIndex.completedEventsCount / eventsIndex.all.length*100}}%">
+            <p>{{eventsIndex.completedEventsCount / eventsIndex.all.length*100}}%</p>
             </div>
           </div>
+            <p class="pull-right"><button class="btn btn-primary" type="button" ui-sref="eventsNew">Add New Task</button></p>
         </div>
 
         <!-- Table -->
@@ -76,11 +63,13 @@
         </table>
       </div>
     </div>
-
-    <div class="panel panel-default col-md-3" ng-controller="UsersController as users">
+    <div class="col-md-3 animated fadeInRight" ng-class="eventsIndex.totalAmount > 0 ? 'alert alert-success' : 'alert alert-danger'">
+      <h4>Your Earnings: £{{eventsIndex.totalAmount}} </h4>
+    </div>
+    <div class="panel panel-default col-md-3 animated fadeInUp" ng-controller="UsersController as users">
       <div class="panel-body">
       <h2>Leaderboard</h2>
-        <div class="media" ng-repeat="user in users.leaderboard |orderBy: '-totals' track by $index" ng-show="$index<=10" ng-class="{'animated infinite pulse' : user._id === users.currentUser._id }">
+        <div class="media" ng-repeat="user in users.leaderboard |orderBy: '-totals' track by $index" ng-show="$index<=10" ng-class="{'animated infinite pulse me' : user._id === users.currentUser._id }">
           <div class="media-left">
             <a href="#">
               <img class="media-object" ng-src="{{user.avatar}}" alt="{{user.username}}">

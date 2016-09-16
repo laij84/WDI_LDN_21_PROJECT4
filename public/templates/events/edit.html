@@ -1,40 +1,60 @@
-<div class="container">
-  <div class="col-md-6 col-md-offset-3">
+<div class="container animated fadeIn">
+  <div class="col-md-6 col-md-offset-3 ">
     <h2>Edit Task</h2>
 
-    <form ng-submit="eventsEdit.update()">
+    <form ng-submit="eventsEdit.update()" name="editEvents.form" novalidate>
 
       <div class="form-group">
       <label>Task:</label>
-        <input placeholder="name" class="form-control" type="text" name="title" ng-model="eventsEdit.selected.title">
+        <input placeholder="Title" class="form-control" type="text" name="title" ng-model="eventsEdit.selected.title" required>
+      </div>
+      <div class="error" ng-messages="editEvents.form.title.$error" ng-show="editEvents.form.title.$touched">
+        <small ng-message="required">*Required</small>
       </div>
 
       <div class="form-group">
         <label>Start date/time:</label>
         <div class='input-group date'>
-            <input datetime-picker type='datetime-local' date class="form-control" ng-model="eventsEdit.selected.start" placeholder="Start date/time">
+            <input name="start" datetime-picker type='datetime-local' date class="form-control" ng-model="eventsEdit.selected.start" required>
              <span class="input-group-addon">
                 <span class="glyphicon glyphicon-calendar"></span>
             </span>
         </div>
       </div>
+      <div class="error" ng-messages="editEvents.form.start.$error" ng-show="editEvents.form.start.$touched">
+        <small ng-message="required">*Required</small>
+      </div>
 
       <div class="form-group">
         <label>End date/time:</label>
          <div class='input-group date'>
-            <input datetime-picker type='datetime-local' date class="form-control" ng-model="eventsEdit.selected.end" placeholder="End date/time">
+            <input name="end" datetime-picker type='datetime-local' date class="form-control" ng-model="eventsEdit.selected.end" placeholder="End date/time" required>
             <span class="input-group-addon">
                 <span class="glyphicon glyphicon-calendar"></span>
             </span>
         </div>
       </div>
 
-      <div class="form-group">
-      <label>Category:</label>
-        <select class="form-control" ng-model="eventsEdit.selected.category" ng-options="type for type in eventsEdit.eventTypes"></select>
+      <div class="error" ng-messages="editEvents.form.end.$error" ng-show="editEvents.form.end.$touched">
+        <small ng-message="required">*Required</small>
       </div>
 
-    <button class="btn btn-primary">Update</button>
+      <div class="form-group">
+      <label>Category:</label>
+        <select name="category" class="form-control" ng-model="eventsEdit.selected.category" ng-options="type for type in eventsEdit.eventTypes" required></select>
+      </div>
+      <div class="error" ng-messages="editEvents.form.category.$error" ng-show="editEvents.form.category.$touched">
+        <small ng-message="required">*Required</small>
+      </div>
+      <small>
+      Example: <br>
+      Very Productive: working, studying<br>
+      Productive: housework, cooking<br>
+      Unproductive: watching television<br>
+      Very Unproductive: drinking
+      </small>
+
+    <button ng-disabled="editEvents.form.$invalid" class="btn btn-primary">Update</button>
     </form>
   </div>
 </div>

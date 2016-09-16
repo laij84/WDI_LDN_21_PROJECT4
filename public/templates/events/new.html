@@ -1,26 +1,33 @@
-<div class="container">
+<div class="container animated fadeIn">
     <div class="col-md-6 col-md-offset-3">
     <h1>New Task</h1>
     <label>Task:</label>
-    <form ng-submit="eventsNew.create();">
+    <form ng-submit="eventsNew.create()" name="newEvents.form" novalidate>
       <div class="form-group">
-        <input placeholder="Task" class="form-control" type="text" name="title" ng-model="eventsNew.new.title">
+        <input placeholder="Task" class="form-control" type="text" name="title" ng-model="eventsNew.new.title" required>
+      </div>
+
+      <div class="error" ng-messages="newEvents.form.title.$error" ng-show="newEvents.form.title.$touched">
+        <small ng-message="required">*Required</small>
       </div>
 
       <label>Start date/time:</label>
       <div class="form-group">
          <div class='input-group date'>
-            <input datetime-picker type='datetime-local' date class="form-control" ng-model="eventsNew.new.start" placeholder="Start date/time">
+            <input name="start" datetime-picker type='datetime-local' date class="form-control" ng-model="eventsNew.new.start" placeholder="Start date/time" required>
             <span class="input-group-addon">
               <span class="glyphicon glyphicon-calendar"></span>
             </span>
         </div>
       </div>
+      <div class="error" ng-messages="newEvents.form.start.$error" ng-show="newEvents.form.start.$touched">
+        <small ng-message="required">*Required</small>
+      </div>
 
       <label>End date/time:</label>
       <div class="form-group">
          <div class='input-group date'>
-          <input datetime-picker type='datetime-local' date class="form-control" ng-model="eventsNew.new.end" placeholder="End date/time">
+          <input name="end" datetime-picker type='datetime-local' date class="form-control" ng-model="eventsNew.new.end" placeholder="End date/time" required>
           <span class="input-group-addon">
             <span class="glyphicon glyphicon-calendar"></span>
           </span>
@@ -28,11 +35,28 @@
       </div>
       <div class="form-group">
 
-      <label>Category:</label>
-        <select class="form-control" ng-model="eventsNew.new.category" ng-options="type for type in eventsNew.eventTypes"></select>
+      <div class="error" ng-messages="newEvents.form.end.$error" ng-show="newEvents.form.end.$touched">
+        <small ng-message="required">*Required</small>
       </div>
 
-      <button class="btn btn-primary">Add Event</button>
+      <label>Category:</label>
+        <select name="category" class="form-control" ng-model="eventsNew.new.category" ng-options="type for type in eventsNew.eventTypes" required></select>
+      </div>
+
+      <div class="error" ng-messages="newEvents.form.category.$error" ng-show="newEvents.form.category.$touched">
+        <small ng-message="required">*Required</small>
+      </div>
+
+      <small>
+      Example: <br>
+      Very Productive: working, studying<br>
+      Productive: housework, cooking<br>
+      Unproductive: watching television<br>
+      Very Unproductive: drinking
+      </small>
+      
+      <br>
+      <button ng-disabled="newEvents.form.$invalid" class="btn btn-primary">Add Event</button>
     </form>
   </div>
 </div>

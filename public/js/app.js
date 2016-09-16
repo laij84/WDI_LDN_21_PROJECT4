@@ -1,7 +1,14 @@
 angular.module("HomeworkApp", ['ui.router', 'ngResource', 'angular-jwt', 'ngMessages', 'satellizer', 'angularjs-datetime-picker', 'ng-fusioncharts'])
   .constant("API_URL", "http://localhost:3000/api")
   .config(Router)
+  .config(setupInterceptor)
   .config(oAuthConfig);
+
+  setupInterceptor.$inject = ["$httpProvider"];
+
+  function setupInterceptor($httpProvider) {
+    return $httpProvider.interceptors.push("AuthInterceptor");
+  }
 
 
   oAuthConfig.$inject = ["$authProvider"];
@@ -32,7 +39,8 @@ function Router($stateProvider, $urlRouterProvider){
   $stateProvider
     .state("home",{
       url: "/",
-      templateUrl: "templates/home.html"
+      templateUrl: "templates/home.html",
+      controller: "HomeController as home"
     })
     .state("register", {
       url:"/register",
@@ -70,6 +78,23 @@ function Router($stateProvider, $urlRouterProvider){
 
 
 
+angular.module("HomeworkApp")
+  .controller("HomeController", HomeController);
+
+HomeController.$inject = ["$state", "$rootScope", "$auth"];
+function HomeController($state, $rootScope, $auth){
+  var self = this;
+
+  this.currentUser = $auth.getPayload();
+
+  $rootScope.$on("unauthorized", function(){
+    self.errorMessage = "Invalid credentials. Please register or login.";
+    console.log("401 received by Home Controller");
+    console.log(self.errorMessage)
+    $state.go("home");
+  });
+
+}
 angular
   .module("HomeworkApp")
   .controller("LoginController", LoginController);
@@ -78,8 +103,8 @@ LoginController.$inject = ["User", "$state", "$rootScope", "$auth"];
 function LoginController(User, $state, $rootScope, $auth) {
   var self = this;
 
+  this.currentUser = $auth.getPayload();
   this.all = User.query();
-  console.log(this.all[0]);
 
   this.credentials = {};
 
@@ -103,6 +128,11 @@ function LoginController(User, $state, $rootScope, $auth) {
     })
   }
 
+  $rootScope.$on("loggedOut", function(){
+    self.currentUser = null;
+    console.log(self.currentUser);
+  });
+
 }
 
 
@@ -118,10 +148,23 @@ function MainController($state, $rootScope, $auth, $window){
 
   this.currentUser = $auth.getPayload();
 
+  $rootScope.$on('$stateChangeStart', function(e, toState, toParams, fromState, fromParams) {
+
+    console.log(toState);
+
+    if(!self.currentUser && ['home', 'login', 'register'].indexOf(toState.name) == -1 ){
+      e.preventDefault();
+      $state.go('home');
+    }
+  });
+
+
   this.logout = function logout(){
     $auth.logout();
+    console.log("logged out")
     this.currentUser = null;
     $state.go("home");
+    $rootScope.$broadcast("loggedOut");
   }
 
   $rootScope.$on("loggedIn", function(){
@@ -129,10 +172,11 @@ function MainController($state, $rootScope, $auth, $window){
     console.log(self.currentUser);
   });
 
-  $rootScope.$on("unauthorized", function(){
-    self.errorMessage = "You must be logged in!"
-    $state.go("login");
-  });
+  // $rootScope.$on("unauthorized", function(){
+  //   self.errorMessage = "Invalid credentials. Please register or login.";
+  //   console.log("401 received")
+  //   $state.go("login");
+  // });
 
 }
 angular
@@ -213,6 +257,32 @@ function User($resource, API_URL) {
     leaderboard: { method: "GET", url: "api/users/leaderboard", isArray: true }
   });
 }
+angular.module("HomeworkApp")
+  .factory("AuthInterceptor", AuthInterceptor);
+
+AuthInterceptor.$inject = ["API_URL", "$rootScope"];
+
+//specific syntax for interceptor to work with Angular.
+function AuthInterceptor(API_URL, $rootScope) {
+  return {
+    request: function(request) {
+      return request;
+      console.log("auth", request)
+    },
+
+    response: function(response){
+      console.log("auth", response)
+      return response;
+    },
+    responseError: function(response){
+      if(response.status===401){
+        console.log("response Err", response)
+        $rootScope.$broadcast("unauthorized");
+      }
+      return response.data; //need to return data
+    }
+  }
+}
 angular
   .module('HomeworkApp')
   .factory('DateService', DateService);
@@ -261,9 +331,10 @@ EventsIndexController.$inject = ["$resource", "$state", "$rootScope", "$auth", "
 function EventsIndexController($resource, $state, $rootScope, $auth, Event, DateService) {
 
   var self = this;
-
+//Count of completed events
+  this.completedEventsCount = 0;
 //total cash variable
-this.totalAmount = 0;
+  this.totalAmount = 0;
 
 //default duration variables
   this.veryProductiveDuration = 0;
@@ -303,6 +374,8 @@ this.totalAmount = 0;
   this.getDay();
 
   function resetValues(){
+    //count
+    self.completedEventsCount = 0;
     //cash
     self.totalAmount = 0;
     //durations
@@ -323,15 +396,13 @@ this.totalAmount = 0;
   self.dataSource = {
       chart: {
           caption: "How you spent your time",
-          subcaption: "Last Year",
           startingangle: "120",
           showlabels: "0",
           showlegend: "1",
           enablemultislicing: "0",
           slicingdistance: "15",
           showpercentvalues: "1",
-          showpercentintooltip: "0",
-          plottooltext: "Age group : $label Total visit : $datavalue",
+          showpercentintooltip: "1",
           animateClockwise: "1",
           theme: "fint"
       },
@@ -351,7 +422,7 @@ function calculateDayValue(){
         self.totalDuration += events[i].duration;
         
         if(events[i].completed){
-          
+          self.completedEventsCount += 1;        
           self.totalAmount += events[i].value;
 
           if(events[i].category==="very productive"){
@@ -379,27 +450,23 @@ function calculateDayValue(){
       self.veryUnproductivePercent = (self.veryUnproductiveDuration / self.totalDuration)*100;
     })
     .then(function(){
-      console.log("percent", self.veryProductivePercent)
+      if(self.all.length >= 1) {
+
+
       self.dataSource = {
           chart: {
               caption: "How you spent your time",
-              subcaption: "Last Year",
               startingangle: "120",
               showlabels: "0",
               showlegend: "1",
               enablemultislicing: "0",
               slicingdistance: "15",
               showpercentvalues: "1",
-              showpercentintooltip: "0",
-              plottooltext: "Age group : $label Total visit : $datavalue",
+              showpercentintooltip: "1",
               theme: "fint",
               animateClockwise: "1"
           },
           data: [
-              {
-                  label: "Very Productive",
-                  value: self.veryProductivePercent
-              },
               {
                   label: "Productive",
                   value: self.productivePercent
@@ -409,11 +476,16 @@ function calculateDayValue(){
                   value: self.unproductivePercent
               },
               {
+                  label: "Very Productive",
+                  value: self.veryProductivePercent
+              },
+              {
                   label: "Very Unproductive",
                   value: self.veryUnproductivePercent
               }
           ]
       }
+    } //end of if statement
       console.log(self.dataSource)
     });
 }
@@ -452,6 +524,20 @@ function calculateDayValue(){
       }
   };
 
+  this.setProgressClass = function (percent) {
+      if (percent < 25) {
+          return "progress-bar-danger";
+      } 
+      else if (percent < 50) { 
+          return "progress-bar-warning";
+      } 
+      else if (percent < 75) {
+          return "progress-bar-info";
+      }
+      else {
+          return "progress-bar-success";
+      }
+  };
 // UPDATE Event on Index Page
   this.update = function updateEvent(event) {
     this.selected = event;

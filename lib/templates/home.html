@@ -1,10 +1,20 @@
   <div id="bg1"><div class="shader"></div></div>
-  <div class="p-header">Pro<span style="color: #f19f0f">Diary</span></div>
 
-  <div class="home-login" ng-controller="LoginController as login">
-    <div class="cl-effect-1">
+  <div ng-if="home.errorMessage" class="alert alert-danger">
+    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    <strong>TEST TEST{{home.errorMessage}}</strong>
+  </div>
+  <div class="p-header animated fadeIn">Pro<span class="diary">Diary</span></div>
+
+  <div class="home-login animated fadeIn" ng-controller="LoginController as login">
+    <div class="cl-effect-1" ng-show="!login.currentUser" >
       <a ui-sref="login">Login</a>
       <a ui-sref="register">Register</a>
+    </div>
+
+    <div class="cl-effect-1" ng-show="login.currentUser">
+      <a ui-sref="eventsIndex">Dashboard</a>
+      <a ng-click="main.logout()">Logout</a>
     </div>
     <br>
 
