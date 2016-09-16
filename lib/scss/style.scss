@@ -267,3 +267,8 @@ button.btn.btn-primary{
   transform: translateX(0px);
 }
 
+@media screen and (max-width: 680px) {
+    .hide-cell {
+        display: none;
+    }
+}
