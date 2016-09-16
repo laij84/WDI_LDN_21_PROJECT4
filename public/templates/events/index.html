@@ -68,15 +68,15 @@
       </div>
     </div> <!-- end of main dashboard panel -->
     
-    <div class="col-md-3">
+    <!-- <div class="col-md-3"> -->
 
-      <div class="panel panel-default animated fadeInRight">
-        <div>
+      <div class="col-md-3 panel panel-default animated fadeInRight">
+        <div ng-class="eventsIndex.totalAmount > 0 ? 'alert alert-success' : 'alert alert-danger'">
           <h4>Your Earnings: £{{eventsIndex.totalAmount}} </h4>
         </div>
       </div>
 
-      <div class="panel panel-default animated fadeInUp" ng-controller="UsersController as users">
+      <div class="col-md-3 panel panel-default animated fadeInUp" ng-controller="UsersController as users">
         <div class="panel-body">
         <h2>Leaderboard</h2>
           <div class="media" ng-repeat="user in users.leaderboard |orderBy: '-totals' track by $index" ng-show="$index<=10" ng-class="{'animated infinite pulse me' : user._id === users.currentUser._id }">
@@ -91,7 +91,7 @@
           </div>
         </div>
       </div>
-    </div>
+    <!-- </div> -->
 
   </div> <!-- end of row -->
 </div> <!-- End of Container -->
