@@ -46,14 +46,16 @@
       <div class="error" ng-messages="editEvents.form.category.$error" ng-show="editEvents.form.category.$touched">
         <small ng-message="required">*Required</small>
       </div>
-      <small>
-      Example: <br>
-      Very Productive: working, studying<br>
-      Productive: housework, cooking<br>
-      Unproductive: watching television<br>
-      Very Unproductive: drinking
-      </small>
-
+      <div>
+        <small>
+        Example: <br>
+        <strong>Very Productive:</strong> working, studying<br>
+        <strong>Productive:</strong> housework, cooking<br>
+        <strong>Unproductive:</strong> watching television<br>
+        <strong>Very Unproductive:</strong> going to the pub
+        </small>
+      </div>
+      <br>
     <button ng-disabled="editEvents.form.$invalid" class="btn btn-primary">Update</button>
     </form>
   </div>

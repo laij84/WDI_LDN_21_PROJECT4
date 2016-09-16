@@ -89,8 +89,8 @@ function HomeController($state, $rootScope, $auth){
 
   $rootScope.$on("unauthorized", function(){
     self.errorMessage = "Invalid credentials. Please register or login.";
-    console.log("401 received by Home Controller");
-    console.log(self.errorMessage)
+    // console.log("401 received by Home Controller");
+    // console.log(self.errorMessage);
     $state.go("home");
   });
 
@@ -150,7 +150,7 @@ function MainController($state, $rootScope, $auth, $window){
 
   $rootScope.$on('$stateChangeStart', function(e, toState, toParams, fromState, fromParams) {
 
-    console.log(toState);
+    // console.log(toState);
 
     if(!self.currentUser && ['home', 'login', 'register'].indexOf(toState.name) == -1 ){
       e.preventDefault();
@@ -169,7 +169,7 @@ function MainController($state, $rootScope, $auth, $window){
 
   $rootScope.$on("loggedIn", function(){
     self.currentUser = $auth.getPayload();
-    console.log(self.currentUser);
+    // console.log(self.currentUser);
   });
 
   // $rootScope.$on("unauthorized", function(){
@@ -212,12 +212,10 @@ function UsersController(User, $auth, $rootScope) {
 
   $rootScope.$on("UpdatedEvent", function(){
     self.leaderboard = User.leaderboard();
-    console.log(self.leaderboard);
+    // console.log(self.leaderboard);
   });
 
-
-
-  console.log(this.leaderboard);
+  // console.log(this.leaderboard);
 }
 angular
   .module('HomeworkApp')
@@ -267,16 +265,16 @@ function AuthInterceptor(API_URL, $rootScope) {
   return {
     request: function(request) {
       return request;
-      console.log("auth", request)
+      // console.log("auth", request);
     },
 
     response: function(response){
-      console.log("auth", response)
+      // console.log("auth", response);
       return response;
     },
     responseError: function(response){
       if(response.status===401){
-        console.log("response Err", response)
+        // console.log("response Err", response);
         $rootScope.$broadcast("unauthorized");
       }
       return response.data; //need to return data
