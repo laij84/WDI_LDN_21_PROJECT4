@@ -78,6 +78,22 @@ function Router($stateProvider, $urlRouterProvider){
 
 
 
+angular
+  .module('HomeworkApp')
+  .directive('date', date);
+
+function date() {
+  return {
+    restrict: 'A',
+    require: 'ngModel',
+    link: function(scope, element, attrs, ngModel) {
+      ngModel.$formatters.push(function(value) {
+        return new Date(value);
+      });
+    }
+  }
+}
+
 angular.module("HomeworkApp")
   .controller("HomeController", HomeController);
 
@@ -217,22 +233,6 @@ function UsersController(User, $auth, $rootScope) {
 
   // console.log(this.leaderboard);
 }
-angular
-  .module('HomeworkApp')
-  .directive('date', date);
-
-function date() {
-  return {
-    restrict: 'A',
-    require: 'ngModel',
-    link: function(scope, element, attrs, ngModel) {
-      ngModel.$formatters.push(function(value) {
-        return new Date(value);
-      });
-    }
-  }
-}
-
 angular
   .module('HomeworkApp')
   .factory('Event', Event);
@@ -388,6 +388,28 @@ function EventsIndexController($resource, $state, $rootScope, $auth, Event, Date
     self.productivePercent = 0;
     self.unproductivePercent = 0;
     self.veryUnproductivePercent = 0;
+
+    //chart
+    self.dataSource = {
+        chart: {
+            caption: "How you spent your time",
+            startingangle: "120",
+            showlabels: "0",
+            showlegend: "1",
+            enablemultislicing: "0",
+            slicingdistance: "15",
+            showpercentvalues: "1",
+            showpercentintooltip: "1",
+            animateClockwise: "1",
+            theme: "fint"
+        },
+        data: [
+            {
+                label: "No tasks",
+                value: 100
+            }
+        ]
+    }
   }
 
 
