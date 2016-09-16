@@ -67,21 +67,24 @@
         </div> 
       </div>
     </div> <!-- end of main dashboard panel -->
+    
+    <div class="col-md-3">
+      <div class="animated fadeInRight" ng-class="eventsIndex.totalAmount > 0 ? 'alert alert-success' : 'alert alert-danger'">
+        <h4>Your Earnings: £{{eventsIndex.totalAmount}} </h4>
+      </div>
 
-    <div class="col-md-3 animated fadeInRight" ng-class="eventsIndex.totalAmount > 0 ? 'alert alert-success' : 'alert alert-danger'">
-      <h4>Your Earnings: £{{eventsIndex.totalAmount}} </h4>
-    </div>
-    <div class="panel panel-default col-md-3 animated fadeInUp" ng-controller="UsersController as users">
-      <div class="panel-body">
-      <h2>Leaderboard</h2>
-        <div class="media" ng-repeat="user in users.leaderboard |orderBy: '-totals' track by $index" ng-show="$index<=10" ng-class="{'animated infinite pulse me' : user._id === users.currentUser._id }">
-          <div class="media-left">
-            <a href="#">
-              <img class="media-object" ng-src="{{user.avatar}}" alt="{{user.username}}">
-            </a>
-          </div>
-          <div class="media-body">
-            <h4 class="media-heading">{{user.username}}: £{{user.totals}}</h4>
+      <div class="panel panel-default animated fadeInUp" ng-controller="UsersController as users">
+        <div class="panel-body">
+        <h2>Leaderboard</h2>
+          <div class="media" ng-repeat="user in users.leaderboard |orderBy: '-totals' track by $index" ng-show="$index<=10" ng-class="{'animated infinite pulse me' : user._id === users.currentUser._id }">
+            <div class="media-left">
+              <a href="#">
+                <img class="media-object" ng-src="{{user.avatar}}" alt="{{user.username}}">
+              </a>
+            </div>
+            <div class="media-body">
+              <h4 class="media-heading">{{user.username}}: £{{user.totals}}</h4>
+            </div>
           </div>
         </div>
       </div>

@@ -78,6 +78,22 @@ function Router($stateProvider, $urlRouterProvider){
 
 
 
+angular
+  .module('HomeworkApp')
+  .directive('date', date);
+
+function date() {
+  return {
+    restrict: 'A',
+    require: 'ngModel',
+    link: function(scope, element, attrs, ngModel) {
+      ngModel.$formatters.push(function(value) {
+        return new Date(value);
+      });
+    }
+  }
+}
+
 angular.module("HomeworkApp")
   .controller("HomeController", HomeController);
 
@@ -217,22 +233,6 @@ function UsersController(User, $auth, $rootScope) {
 
   // console.log(this.leaderboard);
 }
-angular
-  .module('HomeworkApp')
-  .directive('date', date);
-
-function date() {
-  return {
-    restrict: 'A',
-    require: 'ngModel',
-    link: function(scope, element, attrs, ngModel) {
-      ngModel.$formatters.push(function(value) {
-        return new Date(value);
-      });
-    }
-  }
-}
-
 angular
   .module('HomeworkApp')
   .factory('Event', Event);
