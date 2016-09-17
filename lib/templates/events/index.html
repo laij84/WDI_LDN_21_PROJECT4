@@ -1,7 +1,7 @@
 <div class="container"> <!-- start of container -->
 <div class="row">
 <!-- List of Events / Tasks -->
-    <div class="col-md-8 col-sm-12"> <!-- start of main dashboard panel -->
+    <div class="col-md-8"> <!-- start of main dashboard panel -->
       <div class="panel panel-default animated fadeInLeft">
         <!-- Default panel contents -->
         <div class="panel-heading text-center">
@@ -28,7 +28,7 @@
 
           <div class="progress">
             <div class="progress-bar" ng-class="eventsIndex.setProgressClass(eventsIndex.completedEventsCount / eventsIndex.all.length*100)" style="width:{{eventsIndex.completedEventsCount / eventsIndex.all.length*100}}%">
-            <p>{{eventsIndex.completedEventsCount / eventsIndex.all.length*100}}%</p>
+            <p>{{(eventsIndex.completedEventsCount / eventsIndex.all.length*100) | number:0}}%</p>
             </div>
           </div>
 
