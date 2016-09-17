@@ -43,7 +43,7 @@ User.create([{
   email: "john@test.com",
   password: "password",
   passwordConfirmation: "password",
-  avatar: "https://place-hoff.com/50/50"
+  avatar: "http://place-hoff.com/50/50"
 }], function(err, users) {
 
   if(!err) console.log("Users created!");
