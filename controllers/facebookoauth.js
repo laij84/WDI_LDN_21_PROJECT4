@@ -4,7 +4,7 @@ var jwt = require('jsonwebtoken');
 var secret = require("../config/tokens").secret;
 
 function login(req, res) {
-
+ console.log("facebook login request:", req);
  request.post({
    url: "https://graph.facebook.com/v2.5/oauth/access_token",
    qs: {
