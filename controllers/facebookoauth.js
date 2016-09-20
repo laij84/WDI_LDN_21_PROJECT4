@@ -4,14 +4,14 @@ var jwt = require('jsonwebtoken');
 var secret = require("../config/tokens").secret;
 
 function login(req, res) {
- console.log("facebook login request:", req);
+ console.log("facebook login request:", req.headers.referer);
  request.post({
    url: "https://graph.facebook.com/v2.5/oauth/access_token",
    qs: {
      client_id: process.env.FB_WDIPROJECT4_API_KEY,
      client_secret: process.env.FB_WDIPROJECT4_API_SECRET,
      code: req.body.code,
-     redirect_uri: "https://prodiary.herokuapp.com"
+     redirect_uri: req.headers.referer
    },
    json: true
  }).then(function(access_token){
